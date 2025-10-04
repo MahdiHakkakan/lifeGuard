@@ -13,6 +13,7 @@ client = OpenAI(
     base_url=os.environ.get("BASE_URL"),
     api_key=os.environ.get("API_KEY"),
 )
+ai_model = os.environ.get("AI_MODEL")
 
 file_path = ("data/file-Ketab Amadegi.pdf")
 loader = PyPDFLoader(file_path)
@@ -80,7 +81,7 @@ def generate(state: State):
     docs_content = "\n\n".join(doc.page_content for doc in state["context"])
     message = rag_prompt_template.format(context=docs_content, question=state["question"])
     response = client.chat.completions.create(
-        model="openai/gpt-4o-mini",
+        model=ai_model,
         messages=[
             {"role": "system", "content": "You are a RAG system assistant."},
             {"role": "user", "content": message},
