@@ -38,3 +38,8 @@ class State(TypedDict):
     question: str
     context: List[Document]
     answer: str
+
+
+def retrieve(state: State):
+    retrieved_docs = collection.query(query_texts=state["question"], n_results=2)
+    return {"context": retrieved_docs}
