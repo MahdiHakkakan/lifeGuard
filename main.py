@@ -2,6 +2,8 @@ import os
 from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from typing_extensions import List, TypedDict
+from langchain_core.documents import Document
 import chromadb
 from openai import OpenAI
 
@@ -31,3 +33,8 @@ results = collection.query(
     query_texts=["تست"],
     n_results=2
 )
+
+class State(TypedDict):
+    question: str
+    context: List[Document]
+    answer: str
