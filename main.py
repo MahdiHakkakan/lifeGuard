@@ -74,3 +74,16 @@ class State(TypedDict):
 def retrieve(state: State):
     retrieved_docs = collection.query(query_texts=state["question"], n_results=2)
     return {"context": retrieved_docs}
+
+
+def generate(state: State):
+    docs_content = "\n\n".join(doc.page_content for doc in state["context"])
+    message = rag_prompt_template.format(context=docs_content, question=state["question"])
+    response = client.chat.completions.create(
+        model="openai/gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a RAG system assistant."},
+            {"role": "user", "content": message},
+        ],
+    )
+    return response.choices[0].message.content
