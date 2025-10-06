@@ -24,10 +24,10 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=200
 chunked_text = text_splitter.split_documents(docs)
 
 collection = chroma_client.create_collection(name="lifeGuard")
-for i in range(len(chunked_text)-1):
+for i, doc in enumerate(chunked_text):
     collection.upsert(
         ids=[f"id{i+1}"],
-        documents=[str(chunked_text[i])],
+        documents=[doc.page_content],
     )
 
 results = collection.query(
