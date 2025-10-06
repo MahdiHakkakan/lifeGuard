@@ -62,3 +62,17 @@ def generate(state: State):
         ],
     )
     return {"answer": response.choices[0].message.content}
+
+if __name__ == "__main__":
+    question = input("سؤالت چیه؟ 🧐\n> ")
+
+    # مرحله ۱: بازیابی
+    retrieved = retrieve({"question": question})
+
+    # مرحله ۲: ساخت پاسخ
+    state = {"question": question, "context": retrieved["context"]}
+    answer = generate(state)
+
+    print("\n🤖 پاسخ مدل:")
+    print(answer)
+
