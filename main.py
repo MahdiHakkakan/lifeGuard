@@ -46,8 +46,9 @@ class State(TypedDict):
 
 
 def retrieve(state: State):
-    retrieved_docs = collection.query(query_texts=state["question"], n_results=2)
-    return {"context": retrieved_docs}
+    results = collection.query(query_texts=[state["question"]], n_results=2)
+    context_docs = [Document(page_content=doc) for doc in results["documents"][0]]
+    return {"context": context_docs}
 
 
 def generate(state: State):
