@@ -61,4 +61,4 @@ def generate(state: State):
             {"role": "user", "content": message},
         ],
     )
-    return response.choices[0].message.content
+    return {"answer": response.choices[0].message.content}
