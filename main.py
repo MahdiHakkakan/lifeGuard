@@ -1,14 +1,9 @@
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from typing_extensions import List, TypedDict
+from rag_core import loader
 from langchain_core.documents import Document
-import chromadb
 from openai import OpenAI
 import sys
-from config import config
-
-collections_directory = config.DB_PATH
-chroma_client = chromadb.PersistentClient(path=collections_directory)
+from rag_core.config import config
 
 client = OpenAI(
     base_url=config.BASE_URL,
@@ -17,24 +12,8 @@ client = OpenAI(
 ai_model = config.AI_MODEL
 
 
-def embed_file(file_name):
-    file_path = (f"data/{file_name}")
-    loader = PyPDFLoader(file_path)
-    docs = loader.load()
-
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=200)
-    chunked_text = text_splitter.split_documents(docs)
-    collection = chroma_client.get_or_create_collection(name="lifeGuard")
-    for i, doc in enumerate(chunked_text):
-        collection.upsert(
-            ids=[f"id{i+1}"],
-            documents=[doc.page_content],
-        )
-
-
-
 rag_prompt_template = config.PROMPT_TEMPLATE
-collection = chroma_client.get_collection("lifeGuard")
+collection = config.chroma_client.get_collection("lifeGuard")
 
 class State(TypedDict):
     question: str
@@ -75,4 +54,4 @@ if __name__ == "__main__":
         print(answer)
     elif sys.argv[1] == "load":
         file_name = sys.argv[2]
-        embed_file(file_name)
+        loader.embed_file(file_name)
