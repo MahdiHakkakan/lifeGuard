@@ -9,7 +9,6 @@ from openai import OpenAI
 import sys
 
 load_dotenv()
-chroma = chromadb.Client()
 collections_directory = os.environ.get("DB_PATH")
 chroma_client = chromadb.PersistentClient(path=collections_directory)
 
