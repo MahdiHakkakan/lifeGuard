@@ -1,5 +1,3 @@
-import os
-from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from typing_extensions import List, TypedDict
@@ -7,16 +5,16 @@ from langchain_core.documents import Document
 import chromadb
 from openai import OpenAI
 import sys
+from config import config
 
-load_dotenv()
-collections_directory = os.environ.get("DB_PATH")
+collections_directory = config.DB_PATH
 chroma_client = chromadb.PersistentClient(path=collections_directory)
 
 client = OpenAI(
-    base_url=os.environ.get("BASE_URL"),
-    api_key=os.environ.get("API_KEY"),
+    base_url=config.BASE_URL,
+    api_key=config.API_KEY,
 )
-ai_model = os.environ.get("AI_MODEL")
+ai_model = config.AI_MODEL
 
 
 def embed_file(file_name):
@@ -35,7 +33,7 @@ def embed_file(file_name):
 
 
 
-rag_prompt_template = os.environ.get("PROMPT_TEMPLATE")
+rag_prompt_template = config.PROMPT_TEMPLATE
 collection = chroma_client.get_collection("lifeGuard")
 
 class State(TypedDict):
