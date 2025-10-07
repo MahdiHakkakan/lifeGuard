@@ -36,7 +36,7 @@ def embed_file(file_name):
 
 
 rag_prompt_template = os.environ.get("PROMPT_TEMPLATE")
-
+collection = chroma_client.get_collection("lifeGuard")
 
 class State(TypedDict):
     question: str
