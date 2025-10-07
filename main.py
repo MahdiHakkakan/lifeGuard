@@ -6,6 +6,7 @@ from typing_extensions import List, TypedDict
 from langchain_core.documents import Document
 import chromadb
 from openai import OpenAI
+import sys
 
 load_dotenv()
 chroma = chromadb.Client()
@@ -63,15 +64,18 @@ def generate(state: State):
     return {"answer": response.choices[0].message.content}
 
 if __name__ == "__main__":
-    question = input("سؤالت چیه؟ 🧐\n> ")
+    if sys.argv[1] == "ask":
+        question = sys.argv[2].strip()
 
-    # مرحله ۱: بازیابی
-    retrieved = retrieve({"question": question})
+        # مرحله ۱: بازیابی
+        retrieved = retrieve({"question": question})
 
-    # مرحله ۲: ساخت پاسخ
-    state = {"question": question, "context": retrieved["context"]}
-    answer = generate(state)
+        # مرحله ۲: ساخت پاسخ
+        state = {"question": question, "context": retrieved["context"]}
+        answer = generate(state)
 
-    print("\n🤖 پاسخ مدل:")
-    print(answer)
-
+        print("\n🤖 پاسخ مدل:")
+        print(answer)
+    elif sys.argv[1] == "load":
+        file_name = sys.argv[2]
+        embed_file(file_name)
