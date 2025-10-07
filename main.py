@@ -18,25 +18,21 @@ client = OpenAI(
 )
 ai_model = os.environ.get("AI_MODEL")
 
-file_path = ("data/file-Ketab Amadegi.pdf")
-loader = PyPDFLoader(file_path)
 
-docs = loader.load()
+def embed_file(file_name):
+    file_path = (f"data/{file_name}")
+    loader = PyPDFLoader(file_path)
+    docs = loader.load()
 
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=200)
-chunked_text = text_splitter.split_documents(docs)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=200)
+    chunked_text = text_splitter.split_documents(docs)
+    collection = chroma_client.get_or_create_collection(name="lifeGuard")
+    for i, doc in enumerate(chunked_text):
+        collection.upsert(
+            ids=[f"id{i+1}"],
+            documents=[doc.page_content],
+        )
 
-collection = chroma_client.get_or_create_collection(name="lifeGuard")
-for i, doc in enumerate(chunked_text):
-    collection.upsert(
-        ids=[f"id{i+1}"],
-        documents=[doc.page_content],
-    )
-
-results = collection.query(
-    query_texts=["تست"],
-    n_results=2
-)
 
 
 rag_prompt_template = os.environ.get("PROMPT_TEMPLATE")
